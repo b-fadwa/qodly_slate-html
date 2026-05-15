@@ -26,7 +26,7 @@ type TextMarks = {
 };
 
 type HtmlTextNode = { text: string } & TextMarks;
-type HtmlElementNode = { type: string; children: HtmlNode[]; [key: string]: any };
+type HtmlElementNode = { type: string; children: HtmlNode[];[key: string]: any };
 type HtmlNode = HtmlTextNode | HtmlElementNode;
 
 const INLINE_TYPES = new Set(['link']);
@@ -64,10 +64,14 @@ const createParagraph = (children: HtmlNode[]): HtmlElementNode => ({
 
 const normalizeText = (text: string, preserveWhitespace = false) => {
   const cleanedText = text.replace(/\r/g, '');
+
   if (preserveWhitespace) return cleanedText;
 
-  const normalizedText = cleanedText.replace(/\s+/g, ' ');
-  return normalizedText.trim() === '' ? '' : normalizedText;
+  // preserve line breaks
+  return cleanedText
+    .split('\n')
+    .map((line) => line.replace(/[ \t]+/g, ' '))
+    .join('\n');
 };
 
 const extractLanguage = (element: HTMLElement) => {
@@ -153,16 +157,16 @@ const toTableRows = (children: HtmlNode[]): HtmlElementNode[] => {
   return rows.length
     ? rows
     : [
-        {
-          type: 'table-row',
-          children: [
-            {
-              type: 'table-cell',
-              children: [createParagraph([{ text: '' }])],
-            },
-          ],
-        },
-      ];
+      {
+        type: 'table-row',
+        children: [
+          {
+            type: 'table-cell',
+            children: [createParagraph([{ text: '' }])],
+          },
+        ],
+      },
+    ];
 };
 
 const toTableCells = (children: HtmlNode[]): HtmlElementNode[] => {
@@ -174,11 +178,11 @@ const toTableCells = (children: HtmlNode[]): HtmlElementNode[] => {
   return cells.length
     ? cells
     : [
-        {
-          type: 'table-cell',
-          children: [createParagraph([{ text: '' }])],
-        },
-      ];
+      {
+        type: 'table-cell',
+        children: [createParagraph([{ text: '' }])],
+      },
+    ];
 };
 
 function deserializeNode(
@@ -316,7 +320,10 @@ const looksLikeHtml = (value: string) => /<\/?[a-z][\s\S]*>/i.test(value);
 
 const deserializeHtml = (value: string): Descendant[] => {
   if (!looksLikeHtml(value)) {
-    return [{ type: 'paragraph', children: [{ text: value }] }] as unknown as Descendant[];
+    return value.split('\n').map((line) => ({
+      type: 'paragraph',
+      children: [{ text: line }],
+    })) as Descendant[];
   }
 
   const parser = new DOMParser();
