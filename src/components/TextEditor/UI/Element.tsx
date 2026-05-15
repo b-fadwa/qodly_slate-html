@@ -3,8 +3,6 @@ import { MdDelete } from 'react-icons/md';
 import { Button } from '.';
 import { useFocused, useReadOnly, useSelected, useSlate } from 'slate-react';
 import useImage from '../Hooks/useImage';
-import useCodeEditor from '../Hooks/useCodeEditor';
-import TableToolBar from './TableToolBar';
 
 interface Element {
   attributes: any;
@@ -18,27 +16,19 @@ const Element: FC<Element> = ({ attributes, children, element }) => {
 
   switch (element.type) {
     case 'code':
-      const { SelectLanguage } = useCodeEditor();
       return (
-        <div className="relative">
-          {!isReadOnly && <SelectLanguage element={element} />}
-          <pre className="whitespace-pre p-2 space-x-2 bg-zinc-300 ">
-            <code className={`lang-${element.language}`}>{children}</code>
-          </pre>
-        </div>
+        <pre className="whitespace-pre p-2 space-x-2 bg-zinc-300" {...attributes}>
+          <code className={`lang-${element.language}`}>{children}</code>
+        </pre>
       );
     case 'table':
-      const displayed = useSelected();
       return (
-        <div className="relative">
-          {displayed && !isReadOnly && <TableToolBar />}
-          <table
-            className="table-fixed w-full border-collapse border border-gray-400"
-            {...attributes}
-          >
-            <tbody>{children}</tbody>
-          </table>
-        </div>
+        <table
+          className="table-fixed w-full border-collapse border border-gray-400"
+          {...attributes}
+        >
+          <tbody>{children}</tbody>
+        </table>
       );
     case 'table-row':
       return (
