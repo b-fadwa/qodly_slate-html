@@ -11,7 +11,6 @@ const handleHotKey = (editor: Editor, event: any) => {
     'ctrl+b': 'bold',
     'ctrl+i': 'italic',
     'ctrl+u': 'underline',
-    'ctrl+`': 'code',
     'ctrl+z': 'undo',
     'ctrl+y': 'redo',
   };

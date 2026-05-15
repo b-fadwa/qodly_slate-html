@@ -17,8 +17,6 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,jsx,html,css}\""
   },
   "dependencies": {
-    "@emoji-mart/data": "^1.2.1",
-    "@emoji-mart/react": "^1.1.1",
     "@ws-ui/craftjs-core": "^0.2.26",
     "@ws-ui/craftjs-layers": "^0.2.4",
     "@ws-ui/craftjs-utils": "^0.2.3",
