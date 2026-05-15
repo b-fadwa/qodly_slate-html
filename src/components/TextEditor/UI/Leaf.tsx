@@ -33,6 +33,14 @@ const Leaf: FC<Leaf> = ({ attributes, children, leaf }) => {
     style = { ...style, backgroundColor: leaf.backgroundColor };
   }
 
+  if (leaf.fontFamily) {
+    style = { ...style, fontFamily: leaf.fontFamily };
+  }
+
+  if (leaf.fontSize) {
+    style = { ...style, fontSize: leaf.fontSize };
+  }
+
   const title = typeof children === 'string' ? children : undefined;
 
   return (
