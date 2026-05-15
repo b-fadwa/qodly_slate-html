@@ -29,7 +29,7 @@ const TextEditor: FC<ITextEditorProps> = ({
     <div ref={connect} style={style} className={cn(className, classNames)}>
       {datasource ? (
         <Slate editor={editor} initialValue={initialValue}>
-          {!readOnly && <Toolbar readonly />}
+          {!readOnly && <Toolbar readonly={readOnly} />}
           <Editable readOnly className="p-2 h-full" />
         </Slate>
       ) : (

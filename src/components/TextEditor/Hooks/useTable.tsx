@@ -51,7 +51,7 @@ const useTable = () => {
       const rowPath = Path.parent(cellPath);
       const tablePath = Path.parent(rowPath);
 
-      table[0].children.forEach((row: any, rowIndex: any) => {
+      table[0].children.forEach((_row: any, rowIndex: any) => {
         let cellPosition: number;
         if (position === 'left') {
           cellPosition = cellPath[cellPath.length - 1];
