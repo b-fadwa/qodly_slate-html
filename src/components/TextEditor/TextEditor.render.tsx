@@ -50,7 +50,7 @@ const BLOCK_TYPES = new Set([
 const initialValue = [
   {
     type: 'paragraph',
-    children: [{ text: '' }],
+    children: [{ text: 'A line of text in a paragraph.' }],
   },
 ] as unknown as Descendant[];
 

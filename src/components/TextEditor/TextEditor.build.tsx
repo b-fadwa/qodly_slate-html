@@ -10,7 +10,7 @@ import { BsFillInfoCircleFill } from 'react-icons/bs';
 const initialValue = [
   {
     type: 'paragraph',
-    children: [{ text: '' }],
+    children: [{ text: 'A line of text in a paragraph.' }],
   },
 ];
 const TextEditor: FC<ITextEditorProps> = ({
