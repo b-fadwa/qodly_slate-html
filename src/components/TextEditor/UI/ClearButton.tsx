@@ -25,6 +25,8 @@ const ClearButton: FC<ClearButton> = ({ icon: Icon, readonly }) => {
         'strikethrough',
         'color',
         'backgroundColor',
+        'fontSize',
+        'fontFamily',
       ];
 
       Transforms.unsetNodes(editor, textMarks, {
