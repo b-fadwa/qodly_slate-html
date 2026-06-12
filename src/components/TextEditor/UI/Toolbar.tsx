@@ -7,10 +7,12 @@ import {
   MdOutlineFormatColorText,
   MdOutlineFormatColorFill,
   MdOutlineFormatClear,
+  MdOutlineFormatSize,
 } from 'react-icons/md';
 
 import { MarkButton } from './';
 import ColorPickerButton from './ColorPickerButton';
+import FontSizeButton from './FontSizeButton';
 import ClearButton from './ClearButton';
 
 interface ToolbarProps {
@@ -24,6 +26,7 @@ const Toolbar: FC<ToolbarProps> = ({ readonly }) => {
       <MarkButton icon={MdOutlineFormatItalic} format="italic" readonly={readonly} />
       <MarkButton icon={MdOutlineFormatUnderlined} format="underline" readonly={readonly} />
       <MarkButton icon={MdOutlineStrikethroughS} format="strikethrough" readonly={readonly} />
+      <FontSizeButton icon={MdOutlineFormatSize} readonly={readonly} />
       <ColorPickerButton icon={MdOutlineFormatColorText} readonly={readonly} format="color" />
       <ColorPickerButton
         icon={MdOutlineFormatColorFill}
