@@ -1,7 +1,14 @@
 import { splitDatasourceID, useRenderer, useSources } from '@ws-ui/webform-editor';
 import cn from 'classnames';
 import { FC, useCallback, useEffect, useState, useRef, MutableRefObject } from 'react';
-import { Descendant, Transforms, createEditor, Element as SlateElement, Text, Node as SlateNode } from 'slate';
+import {
+  Descendant,
+  Transforms,
+  createEditor,
+  Element as SlateElement,
+  Text,
+  Node as SlateNode,
+} from 'slate';
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react';
 import { ITextEditorProps } from './TextEditor.config';
 import { Toolbar, Element, Leaf } from './UI';
@@ -50,7 +57,7 @@ const BLOCK_TYPES = new Set([
 const initialValue = [
   {
     type: 'paragraph',
-    children: [{ text: 'A line of text in a paragraph.' }],
+    children: [{ text: '' }],
   },
 ] as unknown as Descendant[];
 
@@ -489,13 +496,23 @@ const TextEditor: FC<ITextEditorProps> = ({
 }) => {
   const { connect } = useRenderer();
   const [value, updateValue] = useState<Descendant[] | null>(null);
+  const pendingSerializedRef = useRef<string | null>(null);
+  const isApplyingExternalRef = useRef(false);
+  const editorWrapperRef = useRef<HTMLDivElement | null>(
+    null,
+  ) as MutableRefObject<HTMLDivElement | null>;
+  const [editor] = useState(() => withInlines(withReact(withHistory(withEmbeds(createEditor())))));
 
   const setValue = (newValue: Descendant[]) => {
-    // compare contents then update to avoid infinite loop
-    if (!isEqual(newValue, value)) {
-      editor.children = newValue;
-      updateValue(newValue);
-    }
+    if (isEqual(newValue, editor.children)) return;
+
+    const reactEditor = editor as ReactEditor;
+    isApplyingExternalRef.current = true;
+    reactEditor.selection = null;
+    reactEditor.children = newValue;
+    updateValue(newValue);
+    reactEditor.onChange();
+    isApplyingExternalRef.current = false;
   };
 
   const {
@@ -503,10 +520,6 @@ const TextEditor: FC<ITextEditorProps> = ({
   } = useSources();
 
   const { id: datasourceID } = splitDatasourceID(datasource);
-  const editorWrapperRef = useRef<HTMLDivElement | null>(
-    null,
-  ) as MutableRefObject<HTMLDivElement | null>; // Explicitly type as MutableRefObject
-  const [editor] = useState(() => withInlines(withReact(withHistory(withEmbeds(createEditor())))));
 
   const renderElement = useCallback((props: any) => <Element {...props} />, []);
   const renderLeaf = useCallback((props: any) => <Leaf {...props} />, []);
@@ -517,6 +530,11 @@ const TextEditor: FC<ITextEditorProps> = ({
 
     const listener = async (/* event */) => {
       const v = await ds.getValue<string>();
+      const serialized = v ?? '';
+      if (pendingSerializedRef.current === serialized) {
+        pendingSerializedRef.current = null;
+        return;
+      }
       setValue(parseEditorValue(v));
     };
 
@@ -544,10 +562,12 @@ const TextEditor: FC<ITextEditorProps> = ({
   }, [editorWrapperRef]);
 
   const handleOnChange = (newValue: Descendant[]) => {
-    if (ds && !datasourceID.startsWith('$')) {
-      //you can only set the value on non iterator ds
-      ds.setValue(null, serializeEditorValueForDatasource(newValue));
-    }
+    if (isApplyingExternalRef.current) return;
+    if (!ds || datasourceID.startsWith('$')) return;
+
+    const serialized = serializeEditorValueForDatasource(newValue);
+    pendingSerializedRef.current = serialized;
+    ds.setValue(null, serialized);
   };
 
   const handlePaste = useCallback(
@@ -585,6 +605,7 @@ const TextEditor: FC<ITextEditorProps> = ({
           {!readOnly && <Toolbar readonly={readOnly} />}
           <Editable
             className="p-2"
+            style={{ fontFamily: style?.fontFamily as string | undefined }}
             renderElement={renderElement}
             renderLeaf={renderLeaf}
             readOnly={readOnly}
