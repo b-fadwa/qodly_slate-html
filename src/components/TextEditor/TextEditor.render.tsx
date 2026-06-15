@@ -605,6 +605,7 @@ const TextEditor: FC<ITextEditorProps> = ({
           {!readOnly && <Toolbar readonly={readOnly} />}
           <Editable
             className="p-2"
+            style={{ fontFamily: style?.fontFamily as string | undefined }}
             renderElement={renderElement}
             renderLeaf={renderLeaf}
             readOnly={readOnly}

@@ -8,11 +8,13 @@ import {
   MdOutlineFormatColorFill,
   MdOutlineFormatClear,
   MdOutlineFormatSize,
+  MdOutlineFontDownload,
 } from 'react-icons/md';
 
 import { MarkButton } from './';
 import ColorPickerButton from './ColorPickerButton';
 import FontSizeButton from './FontSizeButton';
+import FontFamilyButton from './FontFamilyButton';
 import ClearButton from './ClearButton';
 import ToolbarInfoPopover from './ToolbarInfoPopover';
 
@@ -37,6 +39,9 @@ const Toolbar: FC<ToolbarProps> = ({ readonly }) => {
       </ToolbarInfoPopover>
       <ToolbarInfoPopover label="textEditor_fontSize">
         <FontSizeButton icon={MdOutlineFormatSize} readonly={readonly} />
+      </ToolbarInfoPopover>
+      <ToolbarInfoPopover label="textEditor_fontFamily">
+        <FontFamilyButton icon={MdOutlineFontDownload} readonly={readonly} />
       </ToolbarInfoPopover>
       <ToolbarInfoPopover label="textEditor_textColor">
         <ColorPickerButton icon={MdOutlineFormatColorText} readonly={readonly} format="color" />
